@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Time Grid</title>
+    </head>
+    <body
+        style="
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        "
+    >
+        <a
+            style="text-decoration: underline; color: black"
+            href="https://joshleeb.com/posts/gridclock.html"
+            ><h1 style="font-family: Courier New">Time grid</h1></a
+        >
+        <canvas style="" id="app" width="600" height="400"></canvas>
+        <h3 id="time-display" style="font-family: Courier New">
+            2000-01-01 T 00:00:00
+        </h3>
+    </body>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            background-color: lightgoldenrodyellow;
+        }
+    </style>
+    <script>
+        const canvas = document.getElementById("app");
+        const ctx = canvas.getContext("2d");
+
+        function draw(h, m, s) {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+
+            const hv = (h / 12) * canvas.height;
+            ctx.fillRect(0, hv, canvas.width, 3);
+
+            const mv1 = (Math.floor(m / 5) / 12) * canvas.width;
+            const mv2 = ((m % 5) / 5) * (canvas.height - hv);
+            ctx.fillRect(mv1, hv, 3, canvas.height);
+            ctx.fillRect(mv1, hv + mv2, canvas.width, 3);
+
+            const sv1 = (Math.floor(s / 5) / 12) * (canvas.width - mv1);
+            const sv2 = ((s % 5) / 5) * (canvas.height - hv - mv2);
+            ctx.fillRect(mv1 + sv1, hv + mv2, 3, canvas.width);
+            ctx.fillRect(mv1 + sv1, hv + mv2 + sv2, canvas.height, 3);
+        }
+
+        function tick() {
+            const now = new Date();
+            const [date, time] = now.toISOString().split("T");
+            const time_display = document.getElementById("time-display");
+            time_display.innerHTML = `${date} T ${time.substring(0, 8)}`;
+            draw(now.getHours() % 12, now.getMinutes(), now.getSeconds());
+            window.requestAnimationFrame(tick);
+        }
+
+        window.requestAnimationFrame(tick);
+    </script>
+</html>
